@@ -61,7 +61,7 @@ void* pmm_alloc_kpage(paddr_t* pa, vm_page_t** p);
 // Returns the number of pages freed.
 size_t pmm_free(list_node* list);
 
-// Helper routine for the above.
+// Free a single page
 size_t pmm_free_page(vm_page_t* page);
 
 // Return count of unallocated physical pages in system

@@ -149,7 +149,7 @@ zx_status_t VmObjectPaged::CreateContiguous(uint32_t pmm_alloc_flags, uint64_t s
     // add them to the appropriate range of the object
     VmObjectPaged* vmop = static_cast<VmObjectPaged*>(vmo.get());
     for (uint64_t off = 0; off < size; off += PAGE_SIZE) {
-        vm_page_t* p = list_remove_head_type(&page_list, vm_page_t, free.node);
+        vm_page_t* p = list_remove_head_type(&page_list, vm_page_t, queue_node);
         ASSERT(p);
 
         InitializeVmPage(p);
@@ -407,7 +407,7 @@ zx_status_t VmObjectPaged::GetPageLocked(uint64_t offset, uint pf_flags, list_no
             paddr_t pa_clone;
             vm_page_t* p_clone = nullptr;
             if (free_list) {
-                p_clone = list_remove_head_type(free_list, vm_page_t, free.node);
+                p_clone = list_remove_head_type(free_list, vm_page, queue_node);
                 if (p_clone) {
                     pa_clone = vm_page_to_paddr(p_clone);
                 }
@@ -462,7 +462,7 @@ zx_status_t VmObjectPaged::GetPageLocked(uint64_t offset, uint pf_flags, list_no
 
     // allocate a page
     if (free_list) {
-        p = list_remove_head_type(free_list, vm_page_t, free.node);
+        p = list_remove_head_type(free_list, vm_page, queue_node);
         if (p) {
             pa = vm_page_to_paddr(p);
         }
