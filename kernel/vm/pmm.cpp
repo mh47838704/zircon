@@ -87,7 +87,7 @@ void* pmm_alloc_kpage(paddr_t* _pa, vm_page_t** _p) {
     LTRACE_ENTRY;
 
     paddr_t pa;
-    vm_page_t* p = pmm_node.AllocPage(PMM_ALLOC_FLAG_KMAP, &pa);
+    vm_page_t* p = pmm_node.AllocPage(0, &pa);
     if (!p)
         return nullptr;
 
