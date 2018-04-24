@@ -111,10 +111,10 @@ vm_page_t* PmmNode::AllocPage(uint alloc_flags, paddr_t* pa) {
 #endif
 
     if (pa) {
-        *pa = page->paddr;
+        *pa = page->paddr();
     }
 
-    LTRACEF("allocating page %p, pa %#" PRIxPTR "\n", page, page->paddr);
+    LTRACEF("allocating page %p, pa %#" PRIxPTR "\n", page, page->paddr());
 
     return page;
 }
@@ -136,7 +136,7 @@ size_t PmmNode::AllocPages(size_t count, uint alloc_flags, list_node* list) {
         if (!page)
             return allocated;
 
-        LTRACEF("allocating page %p, pa %#" PRIxPTR "\n", page, page->paddr);
+        LTRACEF("allocating page %p, pa %#" PRIxPTR "\n", page, page->paddr());
 
         DEBUG_ASSERT(free_count_ > 0);
 
@@ -215,7 +215,7 @@ size_t PmmNode::AllocContiguous(const size_t count, uint alloc_flags, uint8_t al
             continue;
 
         if (pa)
-            *pa = p->paddr;
+            *pa = p->paddr();
 
         /* remove the pages from the run out of the free list */
         for (size_t i = 0; i < count; i++, p++) {
@@ -283,7 +283,7 @@ size_t PmmNode::Free(list_node* list) {
 }
 
 void PmmNode::Free(vm_page* page) {
-    LTRACEF("page %p, pa %#" PRIxPTR "\n", page, page->paddr);
+    LTRACEF("page %p, pa %#" PRIxPTR "\n", page, page->paddr());
 
     AutoLock al(&lock_);
 
@@ -356,13 +356,13 @@ void PmmNode::EnforceFill() {
 }
 
 void PmmNode::FreeFill(vm_page_t* page) {
-    void* kvaddr = paddr_to_kvaddr(page->paddr);
+    void* kvaddr = paddr_to_kvaddr(page->paddr());
     DEBUG_ASSERT(is_kernel_address((vaddr_t)kvaddr));
     memset(kvaddr, PMM_FREE_FILL_BYTE, PAGE_SIZE);
 }
 
 void PmmNode::CheckFreeFill(vm_page_t* page) {
-    uint8_t* kvaddr = static_cast<uint8_t*>(paddr_to_kvaddr(page->paddr));
+    uint8_t* kvaddr = static_cast<uint8_t*>(paddr_to_kvaddr(page->paddr()));
     for (size_t j = 0; j < PAGE_SIZE; ++j) {
         ASSERT(!enforce_fill_ || *(kvaddr + j) == PMM_FREE_FILL_BYTE);
     }

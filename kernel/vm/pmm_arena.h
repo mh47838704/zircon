@@ -48,7 +48,7 @@ public:
 
     // helpers
     bool page_belongs_to_arena(const vm_page* page) const {
-        return (page->paddr >= base() && page->paddr < (base() + size()));
+        return (page->paddr() >= base() && page->paddr() < (base() + size()));
     }
 
     bool address_in_arena(paddr_t address) const {

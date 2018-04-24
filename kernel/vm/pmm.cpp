@@ -48,10 +48,6 @@ static void pmm_enforce_fill(uint level) {
 LK_INIT_HOOK(pmm_fill, &pmm_enforce_fill, LK_INIT_LEVEL_VM);
 #endif
 
-paddr_t vm_page_to_paddr(const vm_page_t* page) {
-    return page->paddr;
-}
-
 vm_page_t* paddr_to_vm_page(paddr_t addr) {
     return pmm_node.PaddrToPage(addr);
 }

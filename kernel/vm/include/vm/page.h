@@ -21,7 +21,7 @@ class VmObject;
 // core per page structure allocated at pmm arena creation time
 typedef struct vm_page {
     struct list_node queue_node;
-    paddr_t paddr;
+    paddr_t _paddr; // use paddr() accessor
     // offset 0x18
 
     struct {
@@ -46,7 +46,12 @@ typedef struct vm_page {
     };
 
     // helper routines
-    bool is_free();
+    bool is_free() const;
+    void dump() const;
+
+    // return the physical address
+    // future plan to store in a compressed form
+    paddr_t paddr() const { return _paddr; }
 } vm_page_t;
 
 // assert that the page structure isn't growing uncontrollably
@@ -58,18 +63,17 @@ enum vm_page_state {
     VM_PAGE_STATE_OBJECT,
     VM_PAGE_STATE_WIRED,
     VM_PAGE_STATE_HEAP,
-    VM_PAGE_STATE_MMU, /* allocated to serve arch-specific mmu purposes */
+    VM_PAGE_STATE_MMU, // allocated to serve arch-specific mmu purposes
 
     _VM_PAGE_STATE_COUNT
 };
 
 // helpers
-inline bool vm_page::is_free() {
+inline bool vm_page::is_free() const {
     return state == VM_PAGE_STATE_FREE;
 }
 
 const char* page_state_to_string(unsigned int state);
-void dump_page(const vm_page_t* page);
 
 // state transition routines
 //void pmm_page_set_state_alloc(vm_page *page);

@@ -76,8 +76,5 @@ void pmm_count_total_states(size_t state_count[_VM_PAGE_STATE_COUNT]);
 // virtual to physical
 paddr_t vaddr_to_paddr(const void* va);
 
-// vm_page_t to physical address
-paddr_t vm_page_to_paddr(const vm_page_t* page);
-
 // paddr to vm_page_t
 vm_page_t* paddr_to_vm_page(paddr_t addr);

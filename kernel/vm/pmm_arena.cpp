@@ -68,7 +68,7 @@ zx_status_t PmmArena::Init(const pmm_arena_info_t* info, PmmNode* node) {
     for (size_t i = 0; i < page_count; i++) {
         auto& p = page_array_[i];
 
-        p.paddr = base() + i * PAGE_SIZE;
+        p._paddr = base() + i * PAGE_SIZE;
         p.state = VM_PAGE_STATE_FREE;
 
         list_add_tail(&list, &p.queue_node);
@@ -124,7 +124,7 @@ retry:
 
         /* we found a run */
         p = &page_array_[start];
-        LTRACEF("found run from pa %#" PRIxPTR " to %#" PRIxPTR "\n", p->paddr, p->paddr + count * PAGE_SIZE);
+        LTRACEF("found run from pa %#" PRIxPTR " to %#" PRIxPTR "\n", p->paddr(), p->paddr() + count * PAGE_SIZE);
 
         return p;
     }
@@ -147,7 +147,7 @@ void PmmArena::Dump(bool dump_pages, bool dump_free_ranges) const {
     /* dump all of the pages */
     if (dump_pages) {
         for (size_t i = 0; i < size() / PAGE_SIZE; i++) {
-            dump_page(&page_array_[i]);
+            page_array_[i].dump();
         }
     }
 

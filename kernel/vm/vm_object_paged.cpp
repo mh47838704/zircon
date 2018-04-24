@@ -39,7 +39,7 @@ void ZeroPage(paddr_t pa) {
 }
 
 void ZeroPage(vm_page_t* p) {
-    paddr_t pa = vm_page_to_paddr(p);
+    paddr_t pa = p->paddr();
     ZeroPage(pa);
 }
 
@@ -243,7 +243,7 @@ void VmObjectPaged::Dump(uint depth, bool verbose) {
             for (uint i = 0; i < depth + 1; ++i) {
                 printf("  ");
             }
-            printf("offset %#" PRIx64 " page %p paddr %#" PRIxPTR "\n", offset, p, vm_page_to_paddr(p));
+            printf("offset %#" PRIx64 " page %p paddr %#" PRIxPTR "\n", offset, p, p->paddr());
             return ZX_ERR_NEXT;
         };
         page_list_.ForEveryPage(f);
@@ -280,7 +280,7 @@ zx_status_t VmObjectPaged::AddPageLocked(vm_page_t* p, uint64_t offset) {
     canary_.Assert();
     DEBUG_ASSERT(lock_.IsHeld());
 
-    LTRACEF("vmo %p, offset %#" PRIx64 ", page %p (%#" PRIxPTR ")\n", this, offset, p, vm_page_to_paddr(p));
+    LTRACEF("vmo %p, offset %#" PRIx64 ", page %p (%#" PRIxPTR ")\n", this, offset, p, p->paddr());
 
     DEBUG_ASSERT(p);
 
@@ -370,7 +370,7 @@ zx_status_t VmObjectPaged::GetPageLocked(uint64_t offset, uint pf_flags, list_no
         if (page_out)
             *page_out = p;
         if (pa_out)
-            *pa_out = vm_page_to_paddr(p);
+            *pa_out = p->paddr();
         return ZX_OK;
     }
 
@@ -409,7 +409,7 @@ zx_status_t VmObjectPaged::GetPageLocked(uint64_t offset, uint pf_flags, list_no
             if (free_list) {
                 p_clone = list_remove_head_type(free_list, vm_page, queue_node);
                 if (p_clone) {
-                    pa_clone = vm_page_to_paddr(p_clone);
+                    pa_clone = p_clone->paddr();
                 }
             }
             if (!p_clone) {
@@ -464,7 +464,7 @@ zx_status_t VmObjectPaged::GetPageLocked(uint64_t offset, uint pf_flags, list_no
     if (free_list) {
         p = list_remove_head_type(free_list, vm_page, queue_node);
         if (p) {
-            pa = vm_page_to_paddr(p);
+            pa = p->paddr();
         }
     }
     if (!p) {
@@ -957,7 +957,7 @@ zx_status_t VmObjectPaged::Lookup(uint64_t offset, uint64_t len, uint pf_flags,
             }
 
             const size_t index = (off - start_page_offset) / PAGE_SIZE;
-            paddr_t pa = vm_page_to_paddr(p);
+            paddr_t pa = p->paddr();
             zx_status_t status = lookup_fn(context, off, index, pa);
             if (status != ZX_OK) {
                 if (unlikely(status == ZX_ERR_NEXT || status == ZX_ERR_STOP)) {
