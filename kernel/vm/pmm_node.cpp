@@ -334,7 +334,8 @@ void PmmNode::Dump(bool is_panic) const TA_NO_THREAD_SAFETY_ANALYSIS {
     if (!is_panic) {
         lock_.Acquire();
     }
-    printf("pmm node %p: free_count %zu\n", this, free_count_);
+    printf("pmm node %p: free_count %zu (%zu bytes), total size %zu\n",
+           this, free_count_, free_count_ * PAGE_SIZE, arena_cumulative_size_);
     for (auto& a : arena_list_) {
         a.Dump(false, false);
     }

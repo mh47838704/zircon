@@ -143,8 +143,8 @@ void PmmArena::CountStates(size_t state_count[_VM_PAGE_STATE_COUNT]) const {
 
 void PmmArena::Dump(bool dump_pages, bool dump_free_ranges) const {
     char pbuf[16];
-    printf("arena %p: name '%s' base %#" PRIxPTR " size %s (0x%zx) priority %u flags 0x%x\n", this, name(), base(),
-           format_size(pbuf, sizeof(pbuf), size()), size(), priority(), flags());
+    printf("  arena %p: name '%s' base %#" PRIxPTR " size %s (0x%zx) priority %u flags 0x%x\n",
+           this, name(), base(), format_size(pbuf, sizeof(pbuf), size()), size(), priority(), flags());
     printf("\tpage_array %p\n", page_array_);
 
     /* dump all of the pages */
